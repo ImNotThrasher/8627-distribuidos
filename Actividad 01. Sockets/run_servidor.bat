@@ -1,0 +1,9 @@
+:: Posiciona en la carpeta actual...
+:: LLama a GCC || archivos .c || -output nombreDelEjecutable
+:: Abre el ejecutable...
+:: Pausa el script...
+
+:: %cd%
+gcc servidor.c socket_utils.c -o servidor -lws2_32
+.\servidor
+:: pause
