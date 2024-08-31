@@ -187,7 +187,7 @@ int enviarDatos(SOCKET socketCliente, const char *mensaje)
     int bytesEnviados = send(socketCliente, mensaje, mensajeLongitud, 0);
     if (bytesEnviados == SOCKET_ERROR)
     {
-        fprintf(stderr, "Error al enviar datos. Código de Error: %d\n", WSAGetLastError());
+        fprintf(stderr, "Error al enviar datos. Codigo de Error: %d\n", WSAGetLastError());
         return EXIT_FAILURE;
     }
     else if (bytesEnviados < mensajeLongitud)
@@ -196,6 +196,6 @@ int enviarDatos(SOCKET socketCliente, const char *mensaje)
         return EXIT_FAILURE;
     }
 
-    printf("Mensaje enviado: %s\n", mensaje);
+    // printf("Mensaje enviado: %s\n", mensaje);
     return EXIT_SUCCESS;
 }

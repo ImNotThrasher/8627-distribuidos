@@ -54,8 +54,6 @@ void procesarOpcion(int opcion, SOCKET socketCliente)
         return;
     }
 
-    printf("\n");
-
     if (enviarDatos(socketCliente, buffer) == EXIT_SUCCESS)
     {
         if (recibirDatos(socketCliente, buffer, sizeof(buffer)) == EXIT_SUCCESS)
