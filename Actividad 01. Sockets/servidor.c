@@ -3,11 +3,7 @@
 #include <winsock2.h>
 #include "servidor.h"
 #include "socket_utils.h"
-
-#define MIN_LONGITUD_USUARIO 5
-#define MAX_LONGITUD_USUARIO 15
-#define MIN_LONGITUD_CONTRASENA 8
-#define MAX_LONGITUD_CONTRASENA 50
+#include "config.h"
 
 const char vocales[] = "aeiou";
 const char consonantes[] = "bcdfghjklmnpqrstvwxyz";
@@ -77,8 +73,8 @@ char *generarPassword(int longitud, SOCKET socketCliente)
         return NULL; // Retornar NULL para indicar un error y evitar continuar
     }
 
-    char *contrasena = malloc(longitud + 1);
-    if (contrasena == NULL)
+    char *password = malloc(longitud + 1);
+    if (password == NULL)
     {
         fprintf(stderr, "Error al asignar memoria para la contraseña.\n");
         return NULL; // Manejar error de malloc
@@ -86,11 +82,11 @@ char *generarPassword(int longitud, SOCKET socketCliente)
 
     for (int i = 0; i < longitud; i++)
     {
-        contrasena[i] = caracteres[rand() % strlen(caracteres)];
+        password[i] = caracteres[rand() % strlen(caracteres)];
     }
-    contrasena[longitud] = '\0';
+    password[longitud] = '\0';
 
-    return contrasena;
+    return password;
 }
 
 /**
@@ -138,11 +134,11 @@ int manejarConexionesEntrantes(SOCKET socketServidor)
             else if (strncmp(buffer, "PASS", 4) == 0)
             {
                 int longitudPassword = atoi(buffer + 5);
-                char *contrasena = generarPassword(longitudPassword, socketCliente);
-                if (contrasena != NULL)
+                char *password = generarPassword(longitudPassword, socketCliente);
+                if (password != NULL)
                 {
-                    enviarDatos(socketCliente, contrasena);
-                    free(contrasena);
+                    enviarDatos(socketCliente, password);
+                    free(password);
                 }
             }
             else
@@ -152,7 +148,8 @@ int manejarConexionesEntrantes(SOCKET socketServidor)
         }
 
         // Cerrar la conexión con el cliente
-        printf("Cerrando conexion con el cliente.\n");
+        printf("Cerrando conexion con el cliente...\n");
+        printf("\n");
         closesocket(socketCliente);
     }
 

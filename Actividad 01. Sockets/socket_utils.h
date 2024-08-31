@@ -2,11 +2,7 @@
 #define SOCKET_UTILS_H
 
 #include <winsock2.h>
-
-#define IP_SERVIDOR "127.0.0.1" // Dirección IP del servidor (localhost)
-#define PUERTO_SERVIDOR 8888    // Puerto del servidor
-
-#define BUFFER_SIZE 1024 // Tamaño del búfer para recibir datos
+#include "config.h"
 
 // Función para inicializar Winsock
 // Parámetros:

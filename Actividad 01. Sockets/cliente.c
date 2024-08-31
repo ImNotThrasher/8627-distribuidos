@@ -3,6 +3,7 @@
 #include <winsock2.h>
 #include "cliente.h"
 #include "socket_utils.h"
+#include "config.h"
 
 /**
  * Muestra el menú principal al usuario.
@@ -37,12 +38,12 @@ void procesarOpcion(int opcion, SOCKET socketCliente)
     switch (opcion)
     {
     case 1:
-        printf("Ingrese la longitud del nombre de usuario: ");
+        printf("Ingrese la longitud del nombre de usuario (%d-%d): ", MIN_LONGITUD_USUARIO, MAX_LONGITUD_USUARIO);
         scanf("%d", &longitud);
         snprintf(buffer, sizeof(buffer), "USER %d", longitud);
         break;
     case 2:
-        printf("Ingrese la longitud de la password: ");
+        printf("Ingrese la longitud de la password (%d-%d): ", MIN_LONGITUD_CONTRASENA, MAX_LONGITUD_CONTRASENA);
         scanf("%d", &longitud);
         snprintf(buffer, sizeof(buffer), "PASS %d", longitud);
         break;
