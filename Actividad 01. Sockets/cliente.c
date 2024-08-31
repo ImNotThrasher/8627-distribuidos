@@ -37,12 +37,12 @@ void procesarOpcion(int opcion, SOCKET socketCliente)
     switch (opcion)
     {
     case 1:
-        printf("Ingrese la longitud del nombre de usuario (5-15): ");
+        printf("Ingrese la longitud del nombre de usuario: ");
         scanf("%d", &longitud);
         snprintf(buffer, sizeof(buffer), "USER %d", longitud);
         break;
     case 2:
-        printf("Ingrese la longitud de la password (8-50): ");
+        printf("Ingrese la longitud de la password: ");
         scanf("%d", &longitud);
         snprintf(buffer, sizeof(buffer), "PASS %d", longitud);
         break;
