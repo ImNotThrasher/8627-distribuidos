@@ -4,23 +4,27 @@
 #include <winsock2.h>
 
 /**
- * Genera un nombre de usuario con la longitud especificada, alternando entre vocales y consonantes.
- * La longitud debe estar entre 5 y 15 caracteres.
+ * Genera un nombre de usuario aleatorio basado en una longitud especificada.
  *
- * @param longitud La longitud deseada del nombre de usuario.
- * @return Un puntero a una cadena de caracteres que contiene el nombre de usuario generado.
- *         El llamador es responsable de liberar la memoria asignada.
+ * El nombre se crea alternando entre vocales y consonantes, seleccionando
+ * letras al azar dentro de los conjuntos disponibles.
+ *
+ * @param longitud La longitud deseada del nombre de usuario, que debe estar
+ *                 entre MIN_LONGITUD_USUARIO y MAX_LONGITUD_USUARIO.
+ * @return Un puntero a un string con el nombre de usuario generado, o NULL
+ *         en caso de error.
  */
-char *generarUsername(int longitud);
-
+char *generarUsername(int longitud, SOCKET socketCliente);
 /**
- * Genera una contraseña con la longitud especificada, utilizando caracteres alfanuméricos (mayúsculas y minúsculas).
- * La longitud debe estar entre 8 y 50 caracteres.
+ * Genera una contraseña aleatoria de longitud especificada.
  *
- * @param longitud La longitud deseada de la contraseña.
- * @return Un puntero a una cadena de caracteres que contiene la contraseña generada.
- *         El llamador es responsable de liberar la memoria asignada.
+ * La contraseña se compone de caracteres seleccionados al azar de un conjunto
+ * predefinido.
+ *
+ * @param longitud La longitud deseada de la contraseña, que debe estar entre
+ *                 MIN_LONGITUD_CONTRASENA y MAX_LONGITUD_CONTRASENA.
+ * @return Un puntero a un string con la contraseña generada, o NULL en caso de error.
  */
-char *generarPassword(int longitud);
+char *generarPassword(int longitud, SOCKET socketCliente);
 
 #endif // SERVIDOR_H
