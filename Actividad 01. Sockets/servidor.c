@@ -14,26 +14,31 @@ const char consonantes[] = "bcdfghjklmnpqrstvwxyz";
 const char caracteres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 /**
- * Genera un nombre de usuario aleatorio de longitud dada.
+ * Genera un nombre de usuario aleatorio basado en una longitud especificada.
  *
- * El nombre de usuario se genera de la siguiente manera: se alternan
- * entre vocales y consonantes, y se elige una letra al azar de las
- * vocales o consonantes disponibles.
+ * El nombre se crea alternando entre vocales y consonantes, seleccionando
+ * letras al azar dentro de los conjuntos disponibles.
  *
- * @param longitud La longitud del nombre de usuario, debe estar entre
- *                 MIN_LONGITUD_USUARIO y MAX_LONGITUD_USUARIO.
- * @return Un puntero a un string que contiene el nombre de usuario
- *         generado.
+ * @param longitud La longitud deseada del nombre de usuario, que debe estar
+ *                 entre MIN_LONGITUD_USUARIO y MAX_LONGITUD_USUARIO.
+ * @return Un puntero a un string con el nombre de usuario generado, o NULL
+ *         en caso de error.
  */
-char *generarUsername(int longitud)
+char *generarUsername(int longitud, SOCKET socketCliente)
 {
     if (longitud < MIN_LONGITUD_USUARIO || longitud > MAX_LONGITUD_USUARIO)
     {
-        fprintf(stderr, "La longitud del nombre de usuario debe estar entre %d y %d.\n", MIN_LONGITUD_USUARIO, MAX_LONGITUD_USUARIO);
-        exit(EXIT_FAILURE);
+        char mensajeError[BUFFER_SIZE];
+        snprintf(mensajeError, sizeof(mensajeError), "Error: La longitud del nombre de usuario debe estar entre %d y %d.\n", MIN_LONGITUD_USUARIO, MAX_LONGITUD_USUARIO);
+        printf("Error en generarUsername: %s\n", mensajeError);
+        enviarDatos(socketCliente, mensajeError);
+        return NULL; // Retornar NULL para indicar un error y evitar continuar
     }
 
     char *nombreUsuario = malloc(longitud + 1);
+    if (nombreUsuario == NULL)
+        return NULL; // Manejar error de malloc
+
     int esVocal = rand() % 2; // 0 = consonante, 1 = vocal
     for (int i = 0; i < longitud; i++)
     {
@@ -52,25 +57,30 @@ char *generarUsername(int longitud)
 }
 
 /**
- * Genera una contraseña aleatoria de longitud dada.
+ * Genera una contraseña aleatoria de longitud especificada.
  *
- * La contraseña se genera seleccionando de forma aleatoria
- * caracteres de la cadena caracteres.
+ * La contraseña se compone de caracteres seleccionados al azar de un conjunto
+ * predefinido.
  *
- * @param longitud La longitud de la contraseña, debe estar entre
+ * @param longitud La longitud deseada de la contraseña, que debe estar entre
  *                 MIN_LONGITUD_CONTRASENA y MAX_LONGITUD_CONTRASENA.
- * @return Un puntero a un string que contiene la contraseña
- *         generada.
+ * @return Un puntero a un string con la contraseña generada, o NULL en caso de error.
  */
-char *generarPassword(int longitud)
+char *generarPassword(int longitud, SOCKET socketCliente)
 {
     if (longitud < MIN_LONGITUD_CONTRASENA || longitud > MAX_LONGITUD_CONTRASENA)
     {
-        fprintf(stderr, "La longitud de la password debe estar entre %d y %d.\n", MIN_LONGITUD_CONTRASENA, MAX_LONGITUD_CONTRASENA);
-        exit(EXIT_FAILURE);
+        char mensajeError[BUFFER_SIZE];
+        snprintf(mensajeError, sizeof(mensajeError), "Error: La longitud de la password debe estar entre %d y %d.\n", MIN_LONGITUD_CONTRASENA, MAX_LONGITUD_CONTRASENA);
+        printf("Error en generarPassword: %s\n", mensajeError);
+        enviarDatos(socketCliente, mensajeError);
+        return NULL; // Retornar NULL para indicar un error y evitar continuar
     }
 
     char *contrasena = malloc(longitud + 1);
+    if (contrasena == NULL)
+        return NULL; // Manejar error de malloc
+
     for (int i = 0; i < longitud; i++)
     {
         contrasena[i] = caracteres[rand() % strlen(caracteres)];
@@ -96,58 +106,50 @@ char *generarPassword(int longitud)
 int manejarConexionesEntrantes(SOCKET socketServidor)
 {
     SOCKET socketCliente;
+    struct sockaddr_in direccionCliente;
+    int clienteLen = sizeof(direccionCliente);
     char buffer[BUFFER_SIZE];
 
-    while (1) // Mantener el servidor en funcionamiento indefinidamente
+    // Aceptar conexiones entrantes
+    while ((socketCliente = accept(socketServidor, (struct sockaddr *)&direccionCliente, &clienteLen)) != INVALID_SOCKET)
     {
-        // Aceptar una conexión entrante
-        socketCliente = accept(socketServidor, NULL, NULL);
-        if (socketCliente == INVALID_SOCKET)
-        {
-            fprintf(stderr, "Error al aceptar la conexion: %d\n", WSAGetLastError());
-            continue; // Continuar aceptando nuevas conexiones
-        }
-        else
-        {
-            printf("Conexion aceptada.\n");
+        printf("Cliente conectado.\n");
 
-            // Manejar la comunicación con el cliente
-            int continuar = 1;
-            while (continuar)
+        // Recibir datos del cliente
+        while (recibirDatos(socketCliente, buffer, BUFFER_SIZE) == EXIT_SUCCESS)
+        {
+            printf("Datos recibidos (User/Pass Longitud): %s\n", buffer);
+
+            // Validar y procesar datos
+            if (strncmp(buffer, "USER", 4) == 0)
             {
-                int resultadoRecepcion = recibirDatos(socketCliente, buffer, BUFFER_SIZE);
-                if (resultadoRecepcion == EXIT_FAILURE)
+                int longitudUsuario = atoi(buffer + 5);
+                char *usuario = generarUsername(longitudUsuario, socketCliente);
+                if (usuario != NULL)
                 {
-                    continuar = 0; // Cerrar la aplicación con el cliente
-                }
-                else
-                {
-                    int longitud;
-                    // Procesar el mensaje recibido
-                    if (sscanf(buffer, "USER %d", &longitud) == 1)
-                    {
-                        char *username = generarUsername(longitud);
-                        enviarDatos(socketCliente, username);
-                        free(username);
-                    }
-                    else if (sscanf(buffer, "PASS %d", &longitud) == 1)
-                    {
-                        char *password = generarPassword(longitud);
-                        enviarDatos(socketCliente, password);
-                        free(password);
-                    }
-                    else
-                    {
-                        enviarDatos(socketCliente, "Comando no reconocido.\n");
-                    }
+                    enviarDatos(socketCliente, usuario);
+                    free(usuario);
                 }
             }
-
-            // Cerrar la conexión con el cliente
-            closesocket(socketCliente);
-            printf("Conexion cerrada.\n");
-            printf("\n");
+            else if (strncmp(buffer, "PASS", 4) == 0)
+            {
+                int longitudPassword = atoi(buffer + 5);
+                char *contrasena = generarPassword(longitudPassword, socketCliente);
+                if (contrasena != NULL)
+                {
+                    enviarDatos(socketCliente, contrasena);
+                    free(contrasena);
+                }
+            }
+            else
+            {
+                enviarDatos(socketCliente, "Comando no reconocido.\n");
+            }
         }
+
+        // Cerrar la conexión con el cliente
+        printf("Cerrando conexion con el cliente.\n");
+        closesocket(socketCliente);
     }
 
     return EXIT_SUCCESS;
