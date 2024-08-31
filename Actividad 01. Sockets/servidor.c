@@ -97,57 +97,57 @@ int manejarConexionesEntrantes(SOCKET socketServidor)
 {
     SOCKET socketCliente;
     char buffer[BUFFER_SIZE];
-    int bytesRecibidos;
 
-    int escuchando = 1;
-    while (escuchando)
+    while (1) // Mantener el servidor en funcionamiento indefinidamente
     {
         // Aceptar una conexión entrante
         socketCliente = accept(socketServidor, NULL, NULL);
         if (socketCliente == INVALID_SOCKET)
         {
             fprintf(stderr, "Error al aceptar la conexion: %d\n", WSAGetLastError());
-            return EXIT_FAILURE;
+            continue; // Continuar aceptando nuevas conexiones
         }
         else
         {
             printf("Conexion aceptada.\n");
-        }
 
-        // Recibir datos del cliente
-        if (recibirDatos(socketCliente, buffer, sizeof(buffer)) == EXIT_SUCCESS)
-        {
-            int longitud;
-            char *resultado;
-            if (strncmp(buffer, "USER", 4) == 0)
+            // Manejar la comunicación con el cliente
+            int continuar = 1;
+            while (continuar)
             {
-                longitud = atoi(buffer + 5);
-                resultado = generarUsername(longitud);
-                snprintf(buffer, sizeof(buffer), "Nombre de usuario generado: %s", resultado);
-                free(resultado);
+                int resultadoRecepcion = recibirDatos(socketCliente, buffer, BUFFER_SIZE);
+                if (resultadoRecepcion == EXIT_FAILURE)
+                {
+                    continuar = 0; // Cerrar la aplicación con el cliente
+                }
+                else
+                {
+                    int longitud;
+                    // Procesar el mensaje recibido
+                    if (sscanf(buffer, "USER %d", &longitud) == 1)
+                    {
+                        char *username = generarUsername(longitud);
+                        enviarDatos(socketCliente, username);
+                        free(username);
+                    }
+                    else if (sscanf(buffer, "PASS %d", &longitud) == 1)
+                    {
+                        char *password = generarPassword(longitud);
+                        enviarDatos(socketCliente, password);
+                        free(password);
+                    }
+                    else
+                    {
+                        enviarDatos(socketCliente, "Comando no reconocido.\n");
+                    }
+                }
             }
-            else if (strncmp(buffer, "PASS", 4) == 0)
-            {
-                longitud = atoi(buffer + 5);
-                resultado = generarPassword(longitud);
-                snprintf(buffer, sizeof(buffer), "Password generada: %s", resultado);
-                free(resultado);
-            }
-            else
-            {
-                snprintf(buffer, sizeof(buffer), "Comando no reconocido.");
-            }
-        }
 
-        // Enviar respuesta al cliente
-        if (enviarDatos(socketCliente, buffer) != EXIT_SUCCESS)
-        {
-            fprintf(stderr, "Error al enviar datos al cliente.\n");
-            break;
+            // Cerrar la conexión con el cliente
+            closesocket(socketCliente);
+            printf("Conexion cerrada.\n");
+            printf("\n");
         }
-
-        // Cerrar el socket del cliente
-        closesocket(socketCliente);
     }
 
     return EXIT_SUCCESS;
