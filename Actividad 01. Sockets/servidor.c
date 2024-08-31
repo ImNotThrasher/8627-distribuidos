@@ -79,13 +79,17 @@ char *generarPassword(int longitud, SOCKET socketCliente)
 
     char *contrasena = malloc(longitud + 1);
     if (contrasena == NULL)
+    {
+        fprintf(stderr, "Error al asignar memoria para la contraseña.\n");
         return NULL; // Manejar error de malloc
+    }
 
     for (int i = 0; i < longitud; i++)
     {
         contrasena[i] = caracteres[rand() % strlen(caracteres)];
     }
     contrasena[longitud] = '\0';
+
     return contrasena;
 }
 
