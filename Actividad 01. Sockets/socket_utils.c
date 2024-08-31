@@ -196,6 +196,6 @@ int enviarDatos(SOCKET socketCliente, const char *mensaje)
         return EXIT_FAILURE;
     }
 
-    // printf("Mensaje enviado: %s\n", mensaje);
+    // printf("Datos enviados: %s\n", mensaje);
     return EXIT_SUCCESS;
 }
