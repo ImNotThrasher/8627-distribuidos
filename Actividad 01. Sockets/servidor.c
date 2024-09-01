@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <winsock2.h>
 #include "servidor.h"
 #include "socket_utils.h"
@@ -8,6 +9,22 @@
 const char vocales[] = "aeiou";
 const char consonantes[] = "bcdfghjklmnpqrstvwxyz";
 const char caracteres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+// Estructura que contiene los parámetros necesarios para manejar una conexión con el cliente.
+typedef struct
+{
+    SOCKET socketCliente;
+} ClienteParam;
+
+/**
+ * Inicializa la biblioteca de números aleatorios con una semilla basada en el
+ * tiempo actual. Debe llamarse a esta función antes de utilizar rand() o
+ * srand() para generar números aleatorios.
+ */
+void inicializarAleatorio()
+{
+    srand(time(NULL)); // Establece la semilla basada en el tiempo actual
+}
 
 /**
  * Genera un nombre de usuario aleatorio basado en una longitud especificada.
@@ -22,6 +39,7 @@ const char caracteres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0
  */
 char *generarUsername(int longitud, SOCKET socketCliente)
 {
+    inicializarAleatorio();
     if (longitud < MIN_LONGITUD_USUARIO || longitud > MAX_LONGITUD_USUARIO)
     {
         char mensajeError[BUFFER_SIZE];
@@ -64,6 +82,7 @@ char *generarUsername(int longitud, SOCKET socketCliente)
  */
 char *generarPassword(int longitud, SOCKET socketCliente)
 {
+    inicializarAleatorio();
     if (longitud < MIN_LONGITUD_CONTRASENA || longitud > MAX_LONGITUD_CONTRASENA)
     {
         char mensajeError[BUFFER_SIZE];
@@ -90,6 +109,68 @@ char *generarPassword(int longitud, SOCKET socketCliente)
 }
 
 /**
+ * Maneja la comunicación con un cliente conectado.
+ *
+ * Esta función se ejecuta en un hilo separado para cada cliente y se encarga
+ * de recibir y procesar los datos enviados por el cliente. Si el mensaje del
+ * cliente comienza con "USER", se genera un nombre de usuario basado en la
+ * longitud especificada y se envía al cliente. Si el mensaje del cliente
+ * comienza con "PASS", se genera una contraseña de longitud especificada y se
+ * envía al cliente. Para cualquier otro mensaje, se envía un mensaje de error.
+ *
+ * @param lpParam Parámetro que contiene un puntero a una estructura `ClienteParam`,
+ *                la cual incluye el socket del cliente que se debe manejar.
+ * @return EXIT_SUCCESS si se procesaron correctamente los datos del cliente y se
+ *         cerró la conexión, EXIT_FAILURE en caso de error.
+ */
+DWORD WINAPI manejarCliente(LPVOID lpParam)
+{
+    ClienteParam *param = (ClienteParam *)lpParam;
+    SOCKET socketCliente = param->socketCliente;
+    free(param);
+
+    char buffer[BUFFER_SIZE];
+
+    // Recibir datos del cliente
+    while (recibirDatos(socketCliente, buffer, BUFFER_SIZE) == EXIT_SUCCESS)
+    {
+        printf("Datos recibidos (User/Pass Longitud): %s\n", buffer);
+
+        // Validar y procesar datos
+        if (strncmp(buffer, "USER", 4) == 0)
+        {
+            int longitudUsuario = atoi(buffer + 5);
+            char *usuario = generarUsername(longitudUsuario, socketCliente);
+            if (usuario != NULL)
+            {
+                enviarDatos(socketCliente, usuario);
+                free(usuario);
+            }
+        }
+        else if (strncmp(buffer, "PASS", 4) == 0)
+        {
+            int longitudPassword = atoi(buffer + 5);
+            char *password = generarPassword(longitudPassword, socketCliente);
+            if (password != NULL)
+            {
+                enviarDatos(socketCliente, password);
+                free(password);
+            }
+        }
+        else
+        {
+            enviarDatos(socketCliente, "Comando no reconocido.\n");
+        }
+    }
+
+    // Cerrar la conexión con el cliente
+    printf("Cerrando conexion con el cliente...\n");
+    printf("\n");
+    closesocket(socketCliente);
+    return EXIT_SUCCESS;
+}
+
+/**
  * Maneja las conexiones entrantes y responde a los clientes.
  *
  * Acepta conexiones entrantes y lee los datos del cliente. Si el
@@ -108,57 +189,44 @@ int manejarConexionesEntrantes(SOCKET socketServidor)
     SOCKET socketCliente;
     struct sockaddr_in direccionCliente;
     int clienteLen = sizeof(direccionCliente);
-    char buffer[BUFFER_SIZE];
+    HANDLE hiloCliente;
+    DWORD idHiloCliente;
 
     // Aceptar conexiones entrantes
     while ((socketCliente = accept(socketServidor, (struct sockaddr *)&direccionCliente, &clienteLen)) != INVALID_SOCKET)
     {
         printf("Cliente conectado.\n");
 
-        // Recibir datos del cliente
-        while (recibirDatos(socketCliente, buffer, BUFFER_SIZE) == EXIT_SUCCESS)
+        // Crear un nuevo hilo para manejar la conexión del cliente
+        ClienteParam *param = malloc(sizeof(ClienteParam));
+        if (param == NULL)
         {
-            printf("Datos recibidos (User/Pass Longitud): %s\n", buffer);
-
-            // Validar y procesar datos
-            if (strncmp(buffer, "USER", 4) == 0)
-            {
-                int longitudUsuario = atoi(buffer + 5);
-                char *usuario = generarUsername(longitudUsuario, socketCliente);
-                if (usuario != NULL)
-                {
-                    enviarDatos(socketCliente, usuario);
-                    free(usuario);
-                }
-            }
-            else if (strncmp(buffer, "PASS", 4) == 0)
-            {
-                int longitudPassword = atoi(buffer + 5);
-                char *password = generarPassword(longitudPassword, socketCliente);
-                if (password != NULL)
-                {
-                    enviarDatos(socketCliente, password);
-                    free(password);
-                }
-            }
-            else
-            {
-                enviarDatos(socketCliente, "Comando no reconocido.\n");
-            }
+            fprintf(stderr, "Error al asignar memoria para el parámetro del cliente.\n");
+            closesocket(socketCliente);
+            continue;
         }
+        param->socketCliente = socketCliente;
 
-        // Cerrar la conexión con el cliente
-        printf("Cerrando conexion con el cliente...\n");
-        printf("\n");
-        closesocket(socketCliente);
+        hiloCliente = CreateThread(NULL, 0, manejarCliente, param, 0, &idHiloCliente);
+        if (hiloCliente == NULL)
+        {
+            fprintf(stderr, "Error al crear el hilo del cliente. Código de Error: %d\n", GetLastError());
+            closesocket(socketCliente);
+            free(param);
+        }
+        else
+        {
+            // Cerrar el hilo cuando haya terminado
+            CloseHandle(hiloCliente);
+        }
     }
-
-    return EXIT_SUCCESS;
 }
 
 /* SERVIDOR */
 int main()
 {
+    inicializarAleatorio();
+
     WSADATA datosWinsock;
     SOCKET socketServidor;
     struct sockaddr_in direccionServidor;
