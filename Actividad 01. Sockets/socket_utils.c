@@ -168,6 +168,40 @@ int conectarAlServidor(SOCKET socketCliente, struct sockaddr_in *direccionServid
 }
 
 /**
+ * Intenta conectar al servidor y maneja los intentos de reconexión.
+ *
+ * @param socketCliente Un puntero al socket del cliente que se utilizará para conectar.
+ *                      Este valor se actualizará si se crea un nuevo socket durante la reconexión.
+ * @param direccionServidor Puntero a la estructura que contiene la dirección IP y el puerto del servidor.
+ * @return EXIT_SUCCESS si la conexión se estableció correctamente, EXIT_FAILURE en caso de error tras agotar los intentos de reconexión.
+ */
+int intentarReconexion(SOCKET *socketCliente, struct sockaddr_in *direccionServidor)
+{
+    int intento = 0;
+
+    while (intento < MAX_REINTENTOS)
+    {
+        // Cerrar el socket actual y crear uno nuevo
+        closesocket(*socketCliente);    // Usa el puntero correctamente
+        *socketCliente = crearSocket(); // Crear un nuevo socket
+
+        // Intentar la conexión al servidor
+        if (conectarAlServidor(*socketCliente, direccionServidor) == EXIT_SUCCESS)
+        {
+            return EXIT_SUCCESS;
+        }
+        else
+        {
+            printf("Reintento de conexion en %d segundos...\n", REINTENTO_DELAY);
+            Sleep(REINTENTO_DELAY * 1000); // Esperar antes de intentar reconectar
+            intento++;
+        }
+    }
+
+    return EXIT_FAILURE;
+}
+
+/**
  * Intenta enviar el mensaje especificado a través del socket del cliente
  * y devuelve EXIT_SUCCESS si se envió correctamente o EXIT_FAILURE
  * si ocurrió un error.

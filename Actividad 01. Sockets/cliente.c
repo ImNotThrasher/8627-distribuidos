@@ -23,14 +23,14 @@ void mostrarMenu(void)
 /**
  * Procesa la opción ingresada por el usuario y envía una solicitud al servidor.
  *
- * Según la opción ingresada, se pide al usuario que ingrese la longitud del
- * nombre de usuario o la contraseña y se envía al servidor la solicitud
- * correspondiente.
+ * Dependiendo de la opción seleccionada, solicita al usuario la longitud del nombre de usuario
+ * o la contraseña, y luego envía la solicitud correspondiente al servidor.
  *
- * @param opcion La opción ingresada por el usuario.
- * @param socketCliente El socket del cliente que se utiliza para enviar la solicitud.
+ * @param opcion La opción ingresada por el usuario (1 para nombre de usuario, 2 para contraseña, 3 para salir).
+ * @param socketCliente El socket del cliente utilizado para comunicarse con el servidor.
+ * @param direccionServidor Estructura que contiene la dirección IP y el puerto del servidor.
  */
-void procesarOpcion(int opcion, SOCKET socketCliente)
+void procesarOpcion(int opcion, SOCKET socketCliente, struct sockaddr_in *direccionServidor)
 {
     char buffer[BUFFER_SIZE];
     int longitud;
@@ -61,8 +61,22 @@ void procesarOpcion(int opcion, SOCKET socketCliente)
         {
             printf("Respuesta del servidor: %s\n", buffer);
         }
-        printf("\n");
     }
+    else
+    {
+        printf("Se perdio la conexion con el servidor. Intentando reconectar...\n");
+        if (intentarReconexion(&socketCliente, direccionServidor) == EXIT_SUCCESS)
+        {
+            printf("Reconexion exitosa.\n");
+        }
+        else
+        {
+            printf("No se pudo reconectar al servidor. Saliendo...\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    printf("\n");
 }
 
 /* CLIENTE */
@@ -123,7 +137,7 @@ int main()
         mostrarMenu();
         scanf("%d", &opcion);
         printf("\n");
-        procesarOpcion(opcion, socketCliente);
+        procesarOpcion(opcion, socketCliente, &direccionServidor);
     }
 
     // Limpiar y cerrar el socket

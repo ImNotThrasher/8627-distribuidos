@@ -93,6 +93,16 @@ int manejarConexionesEntrantes(SOCKET socketServidor);
 // - EXIT_FAILURE si ocurrió un error al intentar conectar al servidor.
 int conectarAlServidor(SOCKET socketCliente, struct sockaddr_in *direccionServidor);
 
+// Función para intentar reconectar al servidor después de una pérdida de conexión.
+// Parámetros:
+// - socketCliente: Puntero al socket del cliente que se utilizará para reconectar.
+//                  Este valor se actualizará si se crea un nuevo socket durante la reconexión.
+// - direccionServidor: Puntero a la estructura que contiene la dirección IP y el puerto del servidor al que se intentará reconectar.
+// Retorno:
+// - EXIT_SUCCESS si la reconexión se estableció correctamente.
+// - EXIT_FAILURE si no se pudo reconectar al servidor después de los intentos.
+int intentarReconexion(SOCKET *socketCliente, struct sockaddr_in *direccionServidor);
+
 // Función para enviar datos al servidor
 // Parámetros:
 // - socketCliente: El socket del cliente desde el cual se enviarán los datos.
