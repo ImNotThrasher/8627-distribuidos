@@ -76,8 +76,6 @@ void procesarOpcion(int opcion, SOCKET socketCliente, struct sockaddr_in *direcc
             exit(EXIT_FAILURE);
         }
     }
-
-    printf("\n");
 }
 
 /* CLIENTE */
@@ -139,6 +137,7 @@ int main()
         scanf("%d", &opcion);
         printf("\n");
         procesarOpcion(opcion, socketCliente, &direccionServidor);
+        printf("\n");
     }
 
     // Limpiar y cerrar el socket

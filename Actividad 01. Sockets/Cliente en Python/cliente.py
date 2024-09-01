@@ -140,11 +140,13 @@ def main():
             opcion = mostrar_menu()
             print("\n")
             procesar_opcion(opcion, sock, direccion_servidor)
+            print("\n")
 
     except Exception as e:
         print(f"Ocurrió un error inesperado: {e}")
     finally:
         sock.close()
+        print("\n")
         input("Presiona Enter para salir...")
 
 if __name__ == "__main__":
