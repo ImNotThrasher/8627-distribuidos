@@ -125,17 +125,27 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
-        sock.connect(direccion_servidor)
-        print("Conexión establecida.\n")
-    except socket.error as e:
-        print(f"Fallo la conexión con el servidor: {e}")
-        sock.close()
-        return
+        direccion_servidor = (IP_SERVIDOR, PUERTO_SERVIDOR)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    while True:
-        opcion = mostrar_menu()
-        print("\n")
-        procesar_opcion(opcion, sock, direccion_servidor)
+        try:
+            sock.connect(direccion_servidor)
+            print("Conexión establecida.\n")
+        except socket.error as e:
+            print(f"Fallo la conexión con el servidor: {e}")
+            sock.close()
+            return
+
+        while True:
+            opcion = mostrar_menu()
+            print("\n")
+            procesar_opcion(opcion, sock, direccion_servidor)
+
+    except Exception as e:
+        print(f"Ocurrió un error inesperado: {e}")
+    finally:
+        sock.close()
+        input("Presiona Enter para salir...")
 
 if __name__ == "__main__":
     main()
