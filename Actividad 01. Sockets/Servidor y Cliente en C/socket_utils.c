@@ -72,6 +72,8 @@ void manejarErrorYLimpiar(SOCKET socket, WSADATA *datosWinsock)
         closesocket(socket);
 
     WSACleanup();
+    printf("Saliendo...\n");
+    system("pause");
     exit(EXIT_FAILURE);
 }
 
@@ -197,6 +199,9 @@ int intentarReconexion(SOCKET *socketCliente, struct sockaddr_in *direccionServi
             intento++;
         }
     }
+
+    printf("No se pudo reconectar al servidor. Presione una tecla para salir...\n");
+    system("pause");
 
     return EXIT_FAILURE;
 }

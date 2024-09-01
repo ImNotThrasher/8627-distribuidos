@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 #include <winsock2.h>
 #include "cliente.h"
 #include "socket_utils.h"
@@ -143,6 +144,8 @@ int main()
     // Limpiar y cerrar el socket
     closesocket(socketCliente);
     WSACleanup();
+
+    system("pause");
 
     return EXIT_SUCCESS;
 }
