@@ -54,6 +54,16 @@ int enlazarSocket(SOCKET socketServidor, struct sockaddr_in *direccionServidor);
 // - EXIT_FAILURE si ocurrió un error al poner el socket en modo de escucha.
 int escucharConexionesEntrantes(SOCKET socketServidor);
 
+// Función encargada de recibir datos del cliente, procesarlos y enviar una
+// respuesta adecuada. Dependiendo del comando recibido ("USER" o "PASS").
+// Parámetros:
+// - lpParam: Un puntero a un objeto `ClienteParam` que contiene el socket del cliente.
+// Retorno:
+// - EXIT_SUCCESS si la conexión y el manejo de datos se realizaron correctamente.
+// - EXIT_FAILURE en caso de error durante la recepción de datos, procesamiento o
+//   si el cliente se desconectó.
+DWORD WINAPI manejarCliente(LPVOID lpParam);
+
 // Función para recibir datos del cliente a través de un socket.
 // Parámetros:
 // - socketCliente: El socket del cliente desde el que se recibirán los datos.
