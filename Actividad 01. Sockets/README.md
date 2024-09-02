@@ -2,7 +2,7 @@
 
 ## Datos del Alumno
 
-- **Nombre:** Sergio Simon Robles Flores
+- **Nombre:** Sergio Simón Robles Flores
 - **DNI:** 35355978
 - **Materia:** Desarrollo de Software en Sistemas Distribuidos - 2024
 - **Universidad:** Universidad Nacional de Lanús
