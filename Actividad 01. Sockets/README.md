@@ -133,24 +133,24 @@ Se realiza una prueba de conectividad entre un cliente y un servidor.
 
 ### Caso de Prueba 2: Pedido de Nombre de Usuario y Validación de Longitud
 Se realiza varias peticiones de nombre de usuario y se valida longitud desde el servidor cuando la longitud esta fuera del rango.
-![Pedido de Nombre de Usuario y Validación de Longitud](imagenes/02.%20Prueba%20peticion%20de%20username.png)
+![Pedido de Nombre de Usuario y Validación de Longitud](Imagenes/02.%20Prueba%20peticion%20de%20username.png)
 
 ### Caso de Prueba 3: Pedido de Contraseña y Validación de Longitud
 Se realiza varias peticiones de contraseña y se valida longitud desde el servidor cuando la longitud esta fuera del rango.
-![Pedido de Contraseña y Validación de Longitud](imagenes/03.%20Prueba%20peticion%20de%20password.png)
+![Pedido de Contraseña y Validación de Longitud](Imagenes/03.%20Prueba%20peticion%20de%20password.png)
 
 ### Caso de Prueba 4: Reinicio del Cliente y Reconexión
 Se reinicia el cliente y se realiza una reconexión de forma automática.
-![Reinicio del Cliente y Reconexión](imagenes/04.%20Reinicio%20del%20cliente.png)
+![Reinicio del Cliente y Reconexión](Imagenes/04.%20Reinicio%20del%20cliente.png)
 
 ### Caso de Prueba 5: Reinicio del Servidor y Reconexión
 Se reinicia el servidor y se realiza una reconexión de forma automática.
-![Reinicio del Servidor y Reconexión](imagenes/05.%20Reinicio%20del%20servidor.png)
+![Reinicio del Servidor y Reconexión](Imagenes/05.%20Reinicio%20del%20servidor.png)
 
 ### Caso de Prueba 6: Múltiples Clientes Conectados al Servidor
 Se conectan al servidor múltiples clientes programados en C.
-![Múltiples Clientes Conectados al Servidor](imagenes/06.%20Multiples%20clientes%20en%20C.png)
+![Múltiples Clientes Conectados al Servidor](Imagenes/06.%20Multiples%20clientes%20en%20C.png)
 
 ### Caso de Prueba 7: Múltiples Clientes en Distintos Lenguajes Conectados al Servidor
 Se conectan al servidor múltiples clientes programados en C y Python.
-![Múltiples Clientes en Distintos Lenguajes Conectados al Servidor](imagenes/07.%20Clientes%20en%20C%20y%20Python%20conectados%20al%20servidor.png)
+![Múltiples Clientes en Distintos Lenguajes Conectados al Servidor](Imagenes/07.%20Clientes%20en%20C%20y%20Python%20conectados%20al%20servidor.png)
