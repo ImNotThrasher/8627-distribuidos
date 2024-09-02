@@ -76,7 +76,7 @@ gcc cliente.c socket_utils.c -o cliente -lws2_32
 python cliente.py
 ```
 
-Si se prefiere generar un ejecutable, se puede usar PyInstaller :
+Si se prefiere generar un ejecutable, se puede usar PyInstaller:
 ```bash
 pyinstaller --onefile cliente.py
 ```
@@ -91,7 +91,7 @@ Una vez establecida la comunicación básica, el siguiente paso fue mejorar la c
 
 ## Escucha Permanente del Servidor
 
-Una de las mejoras más importantes del servidor fue la implementación de escucha permanente, si bien no esta especificado en la consigna de la actividad, esta funcionalidad permite al servidor manejar múltiples clientes de manera concurrente.
+Una de las mejoras más importantes del servidor fue la implementación de escucha permanente, si bien no está especificado en la consigna de la actividad, esta funcionalidad permite al servidor manejar múltiples clientes de manera concurrente.
 
 ## Manejo de Conexiones Múltiples
 
@@ -99,7 +99,7 @@ La siguiente mejora fue la introducción de la capacidad del servidor para manej
 
 ## Reconexión Automática del Cliente
 
-Lo ultimo que se implementó fue la reconexión automática del cliente en caso de que se perdiera la conexión con el servidor esperando una respuesta. En caso de una interrupción temporal de la red o de una una caída del servidor, el cliente intenta reconectarse automáticamente.
+Lo último que se implementó fue la reconexión automática del cliente en caso de que se perdiera la conexión con el servidor esperando una respuesta. En caso de una interrupción temporal de la red o de una una caída del servidor, el cliente intenta reconectarse automáticamente.
 
 ## Flujo de Ejecución
 
