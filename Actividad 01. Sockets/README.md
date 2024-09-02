@@ -129,28 +129,35 @@ A continuación se detallan los distintos casos de prueba utilizados para valida
 
 ### Caso de Prueba 1: Conexión Básica entre Cliente y Servidor
 Se realiza una prueba de conectividad entre un cliente y un servidor.
+
 ![Conexión Básica entre Cliente y Servidor](imagenes/01.%20Conexion%20de%20cliente%20y%20servidor%20en%20C.png)
 
 ### Caso de Prueba 2: Pedido de Nombre de Usuario y Validación de Longitud
 Se realiza varias peticiones de nombre de usuario y se valida longitud desde el servidor cuando la longitud esta fuera del rango.
+
 ![Pedido de Nombre de Usuario y Validación de Longitud](Imagenes/02.%20Prueba%20peticion%20de%20username.png)
 
 ### Caso de Prueba 3: Pedido de Contraseña y Validación de Longitud
 Se realiza varias peticiones de contraseña y se valida longitud desde el servidor cuando la longitud esta fuera del rango.
+
 ![Pedido de Contraseña y Validación de Longitud](Imagenes/03.%20Prueba%20peticion%20de%20password.png)
 
 ### Caso de Prueba 4: Reinicio del Cliente y Reconexión
 Se reinicia el cliente y se realiza una reconexión de forma automática.
+
 ![Reinicio del Cliente y Reconexión](Imagenes/04.%20Reinicio%20del%20cliente.png)
 
 ### Caso de Prueba 5: Reinicio del Servidor y Reconexión
 Se reinicia el servidor y se realiza una reconexión de forma automática.
+
 ![Reinicio del Servidor y Reconexión](Imagenes/05.%20Reinicio%20del%20servidor.png)
 
 ### Caso de Prueba 6: Múltiples Clientes Conectados al Servidor
 Se conectan al servidor múltiples clientes programados en C.
+
 ![Múltiples Clientes Conectados al Servidor](Imagenes/06.%20Multiples%20clientes%20en%20C.png)
 
 ### Caso de Prueba 7: Múltiples Clientes en Distintos Lenguajes Conectados al Servidor
 Se conectan al servidor múltiples clientes programados en C y Python.
+
 ![Múltiples Clientes en Distintos Lenguajes Conectados al Servidor](Imagenes/07.%20Clientes%20en%20C%20y%20Python%20conectados%20al%20servidor.png)
