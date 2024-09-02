@@ -130,7 +130,7 @@ A continuación se detallan los distintos casos de prueba utilizados para valida
 ### Caso de Prueba 1: Conexión Básica entre Cliente y Servidor
 Se realiza una prueba de conectividad entre un cliente y un servidor.
 
-![Conexión Básica entre Cliente y Servidor](imagenes/01.%20Conexion%20de%20cliente%20y%20servidor%20en%20C.png)
+![Conexión Básica entre Cliente y Servidor](Imagenes/01.%20Conexion%20de%20cliente%20y%20servidor%20en%20C.png)
 
 ### Caso de Prueba 2: Pedido de Nombre de Usuario y Validación de Longitud
 Se realiza varias peticiones de nombre de usuario y se valida longitud desde el servidor cuando la longitud esta fuera del rango.
